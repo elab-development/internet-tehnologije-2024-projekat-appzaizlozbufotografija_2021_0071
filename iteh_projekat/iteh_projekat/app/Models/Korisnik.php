@@ -2,11 +2,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Sanctum\HasApiTokens; // Dodaj ovu liniju
+use Illuminate\Database\Eloquent\Factories\HasFactory; // Dodaj HasFactory
 
-class Korisnik extends Model
+class Korisnik extends Authenticatable  
 {
-    use HasFactory;
+    use HasApiTokens, HasFactory;  // Dodaj HasApiTokens
 
     // Dodaj naziv tabele
     protected $table = 'korisnici';
@@ -27,4 +29,11 @@ class Korisnik extends Model
     {
         return $this->belongsTo(Uloga::class);
     }
+    
+    public function getAuthPassword()
+    {
+        return $this->lozinka;  // Koristi lozinku iz tabele
+    }
+
+    // Definisanje veza sa drugim modelima
 }

@@ -18,23 +18,10 @@ return [
     |
     */
 
-    'driver' => env('SESSION_DRIVER', 'database'),
+'driver' => env('SESSION_DRIVER', 'file'),
+'lifetime' => 120,
+'expire_on_close' => false,
 
-    /*
-    |--------------------------------------------------------------------------
-    | Session Lifetime
-    |--------------------------------------------------------------------------
-    |
-    | Here you may specify the number of minutes that you wish the session
-    | to be allowed to remain idle before it expires. If you want them
-    | to expire immediately when the browser is closed then you may
-    | indicate that via the expire_on_close configuration option.
-    |
-    */
-
-    'lifetime' => env('SESSION_LIFETIME', 120),
-
-    'expire_on_close' => env('SESSION_EXPIRE_ON_CLOSE', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -73,7 +60,7 @@ return [
     |
     */
 
-    'connection' => env('SESSION_CONNECTION'),
+    'connection' => null,
 
     /*
     |--------------------------------------------------------------------------
@@ -85,6 +72,7 @@ return [
     | for you; however, you're welcome to change this to another table.
     |
     */
+'session_domain' => env('SESSION_DOMAIN', null),
 
     'table' => env('SESSION_TABLE', 'sessions'),
 
@@ -156,7 +144,7 @@ return [
     |
     */
 
-    'domain' => env('SESSION_DOMAIN'),
+    'domain' => env('SESSION_DOMAIN', null),
 
     /*
     |--------------------------------------------------------------------------

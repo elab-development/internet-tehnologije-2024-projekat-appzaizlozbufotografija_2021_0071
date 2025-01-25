@@ -7,17 +7,24 @@ use App\Http\Controllers\PrijavaController;
 use App\Http\Controllers\GalerijaController;
 use App\Http\Controllers\FotografijaController;
 use App\Http\Controllers\UlogaController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\Auth\RegisterController;
 
-/*
-|----------------------------------------------------------------------
-| API Routes
-|----------------------------------------------------------------------
-| Here is where you can register API routes for your application.
-| Routes are loaded by the RouteServiceProvider within a group
-| assigned the "api" middleware group.
-| Enjoy building your API!
-|----------------------------------------------------------------------
-*/
+
+Route::post('register', [RegisterController::class, 'register']);
+Route::post('login', [LoginController::class, 'login']);
+Route::post('logout', [LogoutController::class, 'logout']);
+
+
+
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [LoginController::class, 'logout']);
+});
+
+
+
 
 // Rute za Korisnik
 Route::apiResource('korisnici', KorisnikController::class); // Korišćenje apiResource za sve CRUD rute za korisnike
@@ -40,4 +47,14 @@ Route::apiResource('uloge', UlogaController::class); // Korišćenje apiResource
 // Test rutu
 Route::get('/test', function () {
     return response()->json(['message' => 'API radi!']);
+
 });
+
+Route::middleware('auth')->group(function () {
+    Route::post('/izlozbe', [IzlozbaController::class, 'store']);
+    Route::put('/izlozbe/{id}', [IzlozbaController::class, 'update']);
+    Route::delete('/izlozbe/{id}', [IzlozbaController::class, 'destroy']);
+});
+
+
+

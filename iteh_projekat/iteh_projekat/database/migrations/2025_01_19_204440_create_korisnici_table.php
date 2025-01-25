@@ -19,6 +19,9 @@ return new class extends Migration
             $table->string('lozinka');
             $table->timestamps();
         });
+        Schema::table('korisnici', function (Blueprint $table) {
+            $table->string('remember_token', 100)->nullable();
+        });
     }
 
     /**
@@ -26,6 +29,9 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('korisnici', function (Blueprint $table) {
+            $table->dropColumn('remember_token');
+        });
         Schema::dropIfExists('korisnici');
     }
 };
