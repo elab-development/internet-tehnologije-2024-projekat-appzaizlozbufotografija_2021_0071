@@ -9,12 +9,12 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
         Schema::create('uloge', function (Blueprint $table) {
-            $table->id();
-            $table->string('naziv')->unique(); // Dodajemo naziv uloge, koji mora biti jedinstven
-            $table->timestamps(); // Automatski dodajemo created_at i updated_at
+            $table->id(); // Ovo će koristiti unsignedBigInteger po defaultu
+            $table->string('naziv');
+            $table->timestamps();
         });
     }
 
@@ -23,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('uloge'); // Brisanje tabele uloga
+        Schema::dropIfExists('uloge');
     }
 };

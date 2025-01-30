@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -15,7 +16,7 @@ class Korisnik extends Authenticatable
 
     // Definiši koja polja mogu biti popunjena
     protected $fillable = [
-        'ime', 'prezime', 'email', 'lozinka', // Dodaj lozinku
+        'ime', 'prezime', 'email', 'lozinka', 'uloga_id', // Dodaj ulogu
     ];
 
     // Veza sa prijavama (jedan korisnik može imati mnogo prijava)

@@ -11,50 +11,48 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
 
-
+// Rute za registraciju i login
 Route::post('register', [RegisterController::class, 'register']);
 Route::post('login', [LoginController::class, 'login']);
 Route::post('logout', [LogoutController::class, 'logout']);
 
-
-
-
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/logout', [LoginController::class, 'logout']);
-});
-
-
-
-
-// Rute za Korisnik
-Route::apiResource('korisnici', KorisnikController::class); // Korišćenje apiResource za sve CRUD rute za korisnike
-
-// Rute za Izlozbe
-Route::apiResource('izlozbe', IzlozbaController::class); // Korišćenje apiResource za sve CRUD rute za izložbe
-
-// Rute za Prijave
-Route::apiResource('prijave', PrijavaController::class); // Korišćenje apiResource za sve CRUD rute za prijave
-
-// Rute za Galerije
-Route::apiResource('galerije', GalerijaController::class); // Korišćenje apiResource za sve CRUD rute za galerije
-
-// Rute za Fotografije
-Route::apiResource('fotografije', FotografijaController::class); // Korišćenje apiResource za sve CRUD rute za fotografije
-
-// Rute za Uloge
-Route::apiResource('uloge', UlogaController::class); // Korišćenje apiResource za sve CRUD rute za uloge
-
-// Test rutu
-Route::get('/test', function () {
-    return response()->json(['message' => 'API radi!']);
-
-});
-
-Route::middleware('auth')->group(function () {
+// Rute za uloge koje mogu biti zaštićene na osnovu uloga korisnika
+Route::middleware(['auth:sanctum', 'role:ADMINISTRATOR'])->group(function () {
     Route::post('/izlozbe', [IzlozbaController::class, 'store']);
     Route::put('/izlozbe/{id}', [IzlozbaController::class, 'update']);
     Route::delete('/izlozbe/{id}', [IzlozbaController::class, 'destroy']);
 });
 
+// Rute za umetnike
+Route::middleware(['auth:sanctum', 'role:UMETNIK'])->group(function () {
+    // Postavite rute koje samo umetnici mogu da pristupe
+});
 
+// Rute koje mogu koristiti korisnici sa različitim ulogama
+Route::middleware(['auth:sanctum'])->group(function () {
+    // Ove rute mogu koristiti svi autentifikovani korisnici
+    Route::apiResource('korisnici', KorisnikController::class);
+    Route::apiResource('izlozbe', IzlozbaController::class);
+    Route::apiResource('prijave', PrijavaController::class);
+    Route::apiResource('galerije', GalerijaController::class);
+    Route::apiResource('fotografije', FotografijaController::class);
+    Route::apiResource('uloge', UlogaController::class);  // Omogućeno za sve autentifikovane korisnike
+});
 
+// Test rutu
+Route::get('/test', function () {
+    return response()->json(['message' => 'API radi!']);
+});
+
+// Ruta za zaštitu određenih API-a
+Route::middleware(['auth:sanctum', 'role:POSETILAC'])->group(function () {
+    Route::get('/pozetilac', function () {
+        return response()->json(['message' => 'Welcome, Visitor!']);
+    });
+});
+
+Route::middleware(['auth:sanctum', 'role:UMETNIK'])->group(function () {
+    Route::get('/umetnik', function () {
+        return response()->json(['message' => 'Welcome, Artist!']);
+    });
+});
