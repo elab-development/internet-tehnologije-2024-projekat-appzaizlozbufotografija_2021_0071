@@ -16,27 +16,24 @@ const Izlozbe = () => {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
-    axios.get('http://localhost:8000/api/izlozbe', {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-    .then(response => {
-      setIzlozbe(response.data.data);
-    })
-    .catch(error => {
-      console.error("Greška pri dohvatanju izložbi:", error);
-      setError('Greška prilikom učitavanja izložbi. Prijavite se ponovo.');
-    });
+    axios.get('http://localhost:8000/api/izlozbe', { headers })
+      .then(response => setIzlozbe(response.data.data))
+      .catch(error => {
+        console.error("Greška pri dohvatanju izložbi:", error);
+        setError('Greška prilikom učitavanja izložbi. Prijavite se ponovo.');
+      });
 
-    axios.get('/api/korisnici/me', {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-    .then(res => setKorisnik(res.data))
-    .catch(() => setKorisnik(null));
+    if (token) {
+      axios.get('/api/korisnici/me', {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+        .then(res => setKorisnik(res.data))
+        .catch(() => setKorisnik(null));
+    } else {
+      setKorisnik(null);
+    }
   }, []);
 
   const formatirajDatum = (datum) => {
@@ -71,7 +68,6 @@ const Izlozbe = () => {
 
   const potvrdiPrijavu = async () => {
     if (!selektovanaIzlozba) return;
-
     try {
       const token = localStorage.getItem('token');
       await axios.post('/api/prijave', {
@@ -95,7 +91,6 @@ const Izlozbe = () => {
     <div className="container mt-4">
       <h2 className="mb-4">Pregled izložbi</h2>
 
-      {/* Filter */}
       <div className="mb-4">
         <label className="form-label fw-semibold">Filtriraj po datumu:</label>
         <input
@@ -121,18 +116,33 @@ const Izlozbe = () => {
                 <p className="mt-2">{izlozba.tema}</p>
                 <p>{formatirajDatum(izlozba.datum_pocetka)} do {formatirajDatum(izlozba.datum_kraja)}</p>
 
-                {/* Slike fotografija izložbe */}
+                {/* Slike izložbe */}
                 {izlozba.fotografije && izlozba.fotografije.length > 0 && (
                   <div className="row mt-3">
-                    {izlozba.fotografije.map((foto) => (
+                    {izlozba.fotografije.map((foto, index) => (
                       <div className="col-md-4 mb-3" key={foto.id}>
-                        <div className="card h-100">
+                        <div className="card h-100 position-relative">
                           <img
                             src={foto.slika}
                             alt={foto.naziv}
                             className="card-img-top"
-                            style={{ objectFit: 'cover', height: '200px' }}
+                            style={{
+                              objectFit: 'cover',
+                              height: '200px',
+                              filter: !korisnik && index > 0 ? 'blur(6px) brightness(70%)' : 'none'
+                            }}
                           />
+                          {!korisnik && index > 0 && (
+                            <div className="position-absolute top-50 start-50 translate-middle text-white text-center">
+                              <small>Ulogujte se da vidite više</small><br />
+                              <button
+                                className="btn btn-sm btn-light mt-1"
+                                onClick={() => navigate('/uloguj-se')}
+                              >
+                                Uloguj se
+                              </button>
+                            </div>
+                          )}
                           <div className="card-body p-2">
                             <h6 className="card-title mb-1">{foto.naziv}</h6>
                             <p className="card-text text-muted mb-0" style={{ fontSize: '0.9em' }}>
@@ -161,7 +171,7 @@ const Izlozbe = () => {
         ))}
       </div>
 
-      {/* Navigacija stranica */}
+      {/* Paginacija */}
       <nav>
         <ul className="pagination justify-content-center">
           {Array.from({ length: ukupnoStranica }, (_, i) => i + 1).map(broj => (
@@ -172,7 +182,7 @@ const Izlozbe = () => {
         </ul>
       </nav>
 
-      {/* Modal */}
+      {/* Modal za potvrdu prijave */}
       {modalOpen && selektovanaIzlozba && korisnik && (
         <>
           <div className="modal show fade d-block" tabIndex="-1" role="dialog" style={{ zIndex: 1060 }}>
@@ -188,12 +198,8 @@ const Izlozbe = () => {
                   <p>Email: <strong>{korisnik.email}</strong></p>
                 </div>
                 <div className="modal-footer">
-                  <button className="btn btn-secondary" onClick={zatvoriModal}>
-                    Odustani
-                  </button>
-                  <button className="btn btn-primary" onClick={potvrdiPrijavu}>
-                    Potvrdi prijavu
-                  </button>
+                  <button className="btn btn-secondary" onClick={zatvoriModal}>Odustani</button>
+                  <button className="btn btn-primary" onClick={potvrdiPrijavu}>Potvrdi prijavu</button>
                 </div>
               </div>
             </div>
@@ -206,6 +212,8 @@ const Izlozbe = () => {
 };
 
 export default Izlozbe;
+
+
 
 
 
