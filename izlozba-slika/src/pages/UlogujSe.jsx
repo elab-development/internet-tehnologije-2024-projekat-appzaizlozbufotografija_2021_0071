@@ -3,68 +3,53 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 function UlogujSe() {
-  const [formData, setFormData] = useState({
-    email: "",
-    lozinka: "",
-  });
+  const [formData, setFormData] = useState({ email: "", lozinka: "" });
   const [poruka, setPoruka] = useState("");
+  const [greske, setGreske] = useState({});
   const navigate = useNavigate();
 
+  const validate = () => {
+    const errors = {};
+    if (!/\S+@\S+\.\S+/.test(formData.email)) errors.email = "Email nije validan.";
+    if (formData.lozinka.length < 6) errors.lozinka = "Lozinka mora imati bar 6 karaktera.";
+    setGreske(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validate()) return;
+
     try {
-      // API poziv za login
       const response = await axios.post("/api/login", formData);
 
-      console.log("API odgovor:", response.data);
-
-      // Provera da li uloga postoji u odgovoru API-ja
       if (!response.data.korisnik || !response.data.korisnik.uloga) {
-        throw new Error("Greška: API nije vratio ulogu korisnika.");
+        throw new Error("API nije vratio ulogu korisnika.");
       }
 
-      // 🔹 Očisti ceo localStorage pre nego što postaviš novu ulogu
-      localStorage.removeItem("role"); 
-
-      // Sačuvaj JWT token i novu ulogu korisnika
+      localStorage.removeItem("role");
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("role", response.data.korisnik.uloga);
-
-      console.log("Finalna vrednost u localStorage:", localStorage.getItem("role")); // Debugging
-
-      
-
-      // Pokreni event koji Navbar može da osluškuje i odmah osveži stanje
       window.dispatchEvent(new Event("storage"));
-
       setPoruka("Uspešno ste se prijavili!");
 
-      // Redirekcija na osnovu uloge korisnika
       const role = response.data.korisnik.uloga;
-      console.log("Uloga korisnika:", role);
-
 
       setTimeout(() => {
         if (role === "ADMINISTRATOR") {
-          console.log("Administrator je ulogovan");
           navigate("/pregled-korisnika");
         } else if (role === "UMETNIK") {
-          console.log("Umetnik je ulogovan");
           navigate("/umetnik/moje-fotografije");
         } else {
-          console.log("Posetilac je ulogovan");
           navigate("/");
         }
-
-        // 🔹 Ako problem i dalje postoji, osveži stranicu kako bi se `localStorage` učitao ispravno
         window.location.reload();
-
-      }, 100); // Kratko kašnjenje da bi se osiguralo da se `localStorage` ažurira pre navigacije.
-
+      }, 100);
     } catch (error) {
       console.error("Greška pri prijavi:", error);
       setPoruka("Greška pri prijavi! Proverite email i lozinku.");
@@ -72,40 +57,39 @@ function UlogujSe() {
   };
 
   return (
-    <div className="container mt-5">
-      <h2>Uloguj se</h2>
+    <div className="container mt-5" style={{ maxWidth: "500px" }}>
+      <h2 className="mb-4">Uloguj se</h2>
       {poruka && <div className="alert alert-info">{poruka}</div>}
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label className="form-label">Email</label>
           <input
             type="email"
-            className="form-control"
+            className={`form-control ${greske.email ? "is-invalid" : ""}`}
             name="email"
             value={formData.email}
             onChange={handleChange}
             required
           />
+          {greske.email && <div className="invalid-feedback">{greske.email}</div>}
         </div>
         <div className="mb-3">
           <label className="form-label">Lozinka</label>
           <input
             type="password"
-            className="form-control"
+            className={`form-control ${greske.lozinka ? "is-invalid" : ""}`}
             name="lozinka"
             value={formData.lozinka}
             onChange={handleChange}
             required
           />
+          {greske.lozinka && <div className="invalid-feedback">{greske.lozinka}</div>}
         </div>
-        <button type="submit" className="btn btn-primary">Prijavi se</button>
+        <button type="submit" className="btn btn-primary w-100">Prijavi se</button>
       </form>
-      <p className="mt-3">
+      <p className="mt-3 text-center">
         Nemate nalog?{" "}
-        <button
-          className="btn btn-link"
-          onClick={() => navigate("/registracija")}
-        >
+        <button className="btn btn-link p-0" onClick={() => navigate("/registracija")}>
           Registrujte se
         </button>
       </p>
@@ -114,4 +98,5 @@ function UlogujSe() {
 }
 
 export default UlogujSe;
+
 
