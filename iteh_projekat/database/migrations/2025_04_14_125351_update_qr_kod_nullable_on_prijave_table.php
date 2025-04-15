@@ -11,17 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        
-        Schema::table('galerije', function (Blueprint $table) {
-            $table->string('slika')->nullable()->after('opis'); // Dodajemo polje za sliku
+        Schema::table('prijave', function (Blueprint $table) {
+            $table->string('qr_kod')->nullable()->change();
         });
-        
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        Schema::table('galerije', function (Blueprint $table) {
-            $table->dropColumn('slika');
+        Schema::table('prijave', function (Blueprint $table) {
+            $table->string('qr_kod')->nullable(false)->change();
         });
     }
 };

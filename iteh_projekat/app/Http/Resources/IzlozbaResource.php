@@ -17,7 +17,9 @@ class IzlozbaResource extends JsonResource
             'datum_kraja' => $this->datum_kraja,
             'dostupna_mesta' => $this->dostupna_mesta,
             'galerija' => new GalerijaResource($this->whenLoaded('galerija')),
+            'fotografije' => FotografijaResource::collection($this->whenLoaded('fotografije')), // <== OVO JE NOVO
         ];
     }
 }
+
 

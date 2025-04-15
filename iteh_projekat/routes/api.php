@@ -16,6 +16,12 @@ Route::post('register', [RegisterController::class, 'register']);
 Route::post('login', [LoginController::class, 'login']);
 Route::post('logout', [LogoutController::class, 'logout'])->middleware('auth:api');
 
+// JAVNO dostupne rute za izložbe i galerije
+Route::get('/izlozbe', [IzlozbaController::class, 'index']);
+Route::get('/izlozbe/{id}', [IzlozbaController::class, 'show']);
+Route::get('/galerije', [GalerijaController::class, 'index']);
+Route::get('/galerije/{id}', [GalerijaController::class, 'show']);
+
 // Rute za ADMINISTRATORA
 Route::middleware(['auth:api', 'role:ADMINISTRATOR'])->group(function () {
     Route::post('/izlozbe', [IzlozbaController::class, 'store']);
@@ -33,9 +39,7 @@ Route::middleware(['auth:api'])->group(function () {
     });
 
     Route::apiResource('korisnici', KorisnikController::class);
-    Route::apiResource('izlozbe', IzlozbaController::class)->except(['store', 'update', 'destroy']);
     Route::apiResource('prijave', PrijavaController::class);
-    Route::apiResource('galerije', GalerijaController::class)->except(['store']);
     Route::apiResource('uloge', UlogaController::class);
 });
 
@@ -58,4 +62,5 @@ Route::middleware(['auth:api', 'role:POSETILAC'])->group(function () {
 Route::get('/test', function () {
     return response()->json(['message' => 'API radi!']);
 });
+
 

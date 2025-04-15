@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,20 +11,24 @@ class Fotografija extends Model
 
     protected $table = 'fotografije';
 
-    // Uključujemo 'slika' u $fillable da bismo omogućili masovno dodeljivanje.
     protected $fillable = [
         'naziv', 
         'opis', 
         'datum_kreiranja', 
         'tehnika', 
-        'slika',       
+        'slika',
         'izlozba_id', 
         'korisnik_id'
     ];
 
-    // Veza – jedna fotografija pripada jednoj izložbi.
     public function izlozba()
     {
         return $this->belongsTo(Izlozba::class, 'izlozba_id');
     }
+
+    public function korisnik()
+    {
+        return $this->belongsTo(Korisnik::class, 'korisnik_id');
+    }
 }
+

@@ -9,17 +9,23 @@ class GalerijaSeeder extends Seeder
 {
     public function run()
     {
-        // Primer unosa galerija
         Galerija::create([
-            'naziv' => 'Galerija Moderna',
-            'opis' => 'Galerija posvećena savremenoj umetnosti i inovacijama.',
+            'naziv' => 'Galerija Savremene umetnosti',
+            'opis' => 'Galerija fokusirana na inovativne umetničke pravce i savremene stilove izražavanja.',
+            'slika' => 'galerije/savremena.jpg',
         ]);
 
         Galerija::create([
-            'naziv' => 'Galerija Priroda',
-            'opis' => 'Galerija koja istražuje lepotu prirodnih pejzaža i faune.',
+            'naziv' => 'Galerija Prirode',
+            'opis' => 'Posvećena lepotama prirode kroz oko fotografa i umetnika.',
+            'slika' => 'galerije/priroda.jpg',
         ]);
 
-        // Dodajte još galerija po potrebi
+        Galerija::create([
+            'naziv' => 'Stari grad',
+            'opis' => 'Tematska galerija o starim gradovima Evrope.',
+            'slika' => 'galerije/stari_grad.jpg',
+        ]);
     }
 }
+

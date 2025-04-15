@@ -14,7 +14,9 @@ return new class extends Migration
             $table->text('opis');
             $table->date('datum_kreiranja');
             $table->string('tehnika');
+            $table->string('slika'); // Dodato polje za sliku
             $table->foreignId('izlozba_id')->constrained('izlozbe')->onDelete('cascade');
+            $table->foreignId('korisnik_id')->constrained('korisnici')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -24,3 +26,4 @@ return new class extends Migration
         Schema::dropIfExists('fotografije');
     }
 };
+

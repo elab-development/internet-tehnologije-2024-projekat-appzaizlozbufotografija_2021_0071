@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('izlozba_id'); // Strani ključ ka izložbama
             $table->foreign('korisnik_id')->references('id')->on('korisnici')->onDelete('cascade');
             $table->foreign('izlozba_id')->references('id')->on('izlozbe')->onDelete('cascade');
-            $table->enum('status', ['AKTIVNA', 'ISTEKLA', 'PONIŠTENA']);
+            $table->enum('status', ['AKTIVNA', 'PONIŠTENA', 'NA ČEKANJU'])->default('NA ČEKANJU');
             $table->dateTime('datum_prijave');
             $table->string('qr_kod');
             $table->timestamps();

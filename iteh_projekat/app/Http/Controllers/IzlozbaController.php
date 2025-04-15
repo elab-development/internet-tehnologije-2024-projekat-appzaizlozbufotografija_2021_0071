@@ -10,11 +10,14 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 class IzlozbaController extends Controller
 {
     public function index() {
-        return IzlozbaResource::collection(Izlozba::all());
+        // Učitavamo relacije: galerija i fotografije
+        $izlozbe = Izlozba::with(['galerija', 'fotografije'])->get();
+        return IzlozbaResource::collection($izlozbe);
     }
 
     public function show($id) {
-        return new IzlozbaResource(Izlozba::findOrFail($id));
+        $izlozba = Izlozba::with(['galerija', 'fotografije'])->findOrFail($id);
+        return new IzlozbaResource($izlozba);
     }
 
     public function store(Request $request) {
@@ -31,7 +34,7 @@ class IzlozbaController extends Controller
         ]);
 
         $izlozba = Izlozba::create($data);
-        return new IzlozbaResource($izlozba);
+        return new IzlozbaResource($izlozba->load(['galerija', 'fotografije']));
     }
 
     public function update(Request $request, $id) {
@@ -49,7 +52,7 @@ class IzlozbaController extends Controller
 
         $izlozba = Izlozba::findOrFail($id);
         $izlozba->update($data);
-        return new IzlozbaResource($izlozba);
+        return new IzlozbaResource($izlozba->load(['galerija', 'fotografije']));
     }
 
     public function destroy($id) {
@@ -61,3 +64,5 @@ class IzlozbaController extends Controller
         return response()->json(['message' => 'Izložba uspešno obrisana!'], 204);
     }
 }
+
+

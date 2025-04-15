@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id(); // Automatski primarni ključ
             $table->string('naziv', 255); // Maksimalna duzina za naziv galerije
             $table->text('opis')->nullable(); // Omogućava prazne opise, ako je potrebno
+            $table->string('slika')->nullable(); // ✅ Dodata kolona za naslovnu sliku galerije
             $table->timestamps(); // Automatski generiše created_at i updated_at kolone
         });
     }
@@ -27,3 +28,4 @@ return new class extends Migration
         Schema::dropIfExists('galerije'); // Brisanje tabele galerije
     }
 };
+
