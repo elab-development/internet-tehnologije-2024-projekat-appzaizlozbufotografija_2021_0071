@@ -16,11 +16,8 @@ const MojeFotografije = () => {
           },
         });
 
-        console.log("API odgovor:", response.data.data);
-
-        setFotografije(response.data.data); // Laravel resource kolekcija
+        setFotografije(response.data.data);
       } catch (error) {
-        console.error("Greška prilikom učitavanja fotografija", error);
         setError("Greška pri učitavanju fotografija.");
       } finally {
         setLoading(false);
@@ -31,29 +28,32 @@ const MojeFotografije = () => {
   }, []);
 
   return (
-    <div className="container mt-4">
-      <h2 className="mb-4">Moje fotografije</h2>
+    <div className="container my-5">
+      <h2 className="text-center mb-5">📸 Moje Fotografije</h2>
 
-      {loading && <p>Učitavanje...</p>}
-      {error && <div className="alert alert-danger">{error}</div>}
+      {loading && <div className="text-center text-muted">Učitavanje fotografija...</div>}
+      {error && <div className="alert alert-danger text-center">{error}</div>}
 
-      {fotografije.length === 0 && !loading ? (
-        <p>Nema fotografija za prikaz.</p>
+      {!loading && fotografije.length === 0 ? (
+        <p className="text-center text-muted">Trenutno nema fotografija za prikaz.</p>
       ) : (
         <div className="row">
           {fotografije.map((fotografija) => (
-            <div key={fotografija.id} className="col-md-4 mb-3">
-              <div className="card h-100">
-                <img
-                  src={fotografija.slika}
-                  alt={fotografija.naziv}
-                  className="card-img-top"
-                />
-                <div className="card-body">
+            <div key={fotografija.id} className="col-lg-4 col-md-6 mb-4 d-flex align-items-stretch">
+              <div className="card shadow-sm w-100">
+                <div style={{ height: "250px", overflow: "hidden" }}>
+                  <img
+                    src={fotografija.slika || "https://via.placeholder.com/500x300?text=Nema+slike"}
+                    alt={fotografija.naziv}
+                    className="card-img-top h-100 w-100 object-fit-cover"
+                  />
+                </div>
+                <div className="card-body d-flex flex-column">
                   <h5 className="card-title">{fotografija.naziv}</h5>
-                  <p className="card-text">{fotografija.opis}</p>
-                  <p className="text-muted">
-                    Tehnika: {fotografija.tehnika} | Datum: {fotografija.datum_kreiranja}
+                  <p className="card-text text-muted flex-grow-1">{fotografija.opis || "Bez opisa."}</p>
+                  <p className="small text-secondary mt-2">
+                    🎨 <strong>Tehnika:</strong> {fotografija.tehnika || "Nepoznato"}<br />
+                    📅 <strong>Datum:</strong> {new Date(fotografija.datum_kreiranja).toLocaleDateString('sr-RS')}
                   </p>
                 </div>
               </div>
@@ -66,6 +66,7 @@ const MojeFotografije = () => {
 };
 
 export default MojeFotografije;
+
 
 
 
